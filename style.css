@@ -1,0 +1,239 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.header {
+    max-width: 1200px;
+    height: 85px;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    color: #FFFFFF;
+}
+
+.header ul {
+    display: flex;
+    gap: 42px;
+    list-style: none;
+    height: 100%;
+    align-items: center;
+}
+
+.header ul a {
+    text-decoration: none;
+    color: #000000;
+}
+
+.header button {
+    width: 162px;
+    height: 39px;
+    top: 23px;
+    left: 1175px;
+    border-radius: 30px;
+    color: #000000;
+    border: 1px solid #6A6A6A;
+    background: transparent;
+}
+
+.header i {
+    width: 26px;
+    height: 26px;
+    color: #1C1C1C;
+}
+
+
+
+main {
+    max-width: 1990px;
+    height: 950px;
+    background-image: url("images/wallpapers\ 2.svg");
+    background-repeat: no-repeat;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+main .h1 {
+    font-weight: 800;
+    font-size: 128px;
+    line-height: 135px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #FFFFFF;
+}
+
+main img {
+    width: 16px;
+    height: 87px;
+    margin: 0 auto;
+}
+
+main .h2 {
+    font-weight: 400;
+    font-size: 28px;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.bar {
+    width: 928px;
+    height: 64px;
+    top: 765px;
+    left: 496px;
+    border-radius: 30px;
+    background-color: #FFFFFF;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    align-items: center;
+}
+
+.bar h1 {
+    font-size: 16px;
+}
+
+.bar h5 {
+    font-size: 12px;
+    color: #6A6A6A;
+}
+
+.btn-bar {
+    width: 168px;
+    height: 40px;
+    top: 777px;
+    left: 1244px;
+    opacity: 1;
+    border-radius: 30px;
+    background-color: #EC1C24;
+    color: #FFFFFF;
+}
+
+.section-1 {
+    width: 1500px;
+    height: 813px;
+    padding-left: 400px;
+    padding-top: 135px;
+    margin: 0 auto;
+}
+
+.section-1 .blancs .blanc {
+    width: 256px;
+    height: 340px;
+    top: 1360px;
+    left: 400px;
+    border-width: 1px;
+    background-image: url("images/Mask\ group.svg");
+    background-repeat: no-repeat;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.section-1 .blancs .blanc .top {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    color: #FFFFFF;
+}
+
+.section-1 .blancs .blanc .top h3 {
+    font-size: 14px;
+    background-color: transparent;
+    border: 1px solid #FFFFFF;
+    border-radius: 30px;
+    padding: 0 10px;
+}
+
+.section-1 .blancs .blanc .down {
+    color: #FFFFFF;
+}
+
+.section-1 .blancs .blanc .down h6 {
+    height: 16px;
+}
+
+.section-1 h1 {
+    font-weight: 500;
+    font-size: 44px;
+    letter-spacing: 0%;
+    font-size: 44px;
+}
+
+.section-1 h2 {
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.section-1 .blancs {
+    display: flex;
+    gap: 32px;
+    padding-top: 62px;
+}
+
+.section-2 {
+    width: 1500px;
+    height: 605px;
+    background-image: url("images/backraund-2.svg");
+    background-repeat: no-repeat;
+    margin: 0 auto;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    padding-bottom: 20px;
+}
+
+.section-2 .blanc {
+    width: 1120px;
+    height: 133px;
+    top: 3243px;
+    left: 400px;
+    border-radius: 30px;
+    background-color: #FFFFFF;
+
+}
+
+.section-2 .blanc .btn-send {
+    width: 168px;
+    height: 40px;
+    top: 777px;
+    left: 1244px;
+    opacity: 1;
+    border-radius: 30px;
+    background-color: #EC1C24;
+    color: #FFFFFF;
+}
+
+.section-2 .blanc h1 {
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 100%;
+}
+
+.section-2 .blanc p {
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 100%;
+}
+.section-2 .blanc .inp-cont{
+    display: flex;
+    flex-direction: column;
+    width: 144px;
+}
+.section-2 .blanc{
+    display: flex;
+    gap: 79px;
+    align-items: center;
+    padding: 0 63px;
+}
+.section-2 .blanc .inp-cont input{
+    border: none;
+    border-bottom:1px solid #848484 ;
+}
