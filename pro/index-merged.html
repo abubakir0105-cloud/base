@@ -86,9 +86,11 @@
 .tops__tab{border:0;background:transparent;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:500;}
 .tops__tab--active{background:var(--tops-green);color:#fff;}
 .tops__row{display:flex;align-items:center;gap:12px;max-width:1100px;margin:0 auto;}
-.tops__grid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;}
-.tops__arrow{color:var(--tops-green);font-size:22px;border:0;background:none;}
-.tops__card{border-radius:10px;padding:14px;position:relative;}
+.tops__grid{flex:1;min-width:0;display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;}
+.tops__grid::-webkit-scrollbar{display:none;}
+.tops__arrow{color:var(--tops-green);font-size:22px;border:0;background:none;padding:8px;transition:transform .15s;}
+.tops__arrow:hover{transform:scale(1.2);}
+.tops__card{flex:0 0 calc((100% - 48px)/3);scroll-snap-align:start;border-radius:10px;padding:14px;position:relative;}
 .tops__badge{position:absolute;top:12px;right:12px;background:var(--tops-green);color:#fff;border-radius:50%;width:38px;height:38px;display:grid;place-items:center;font-size:9px;line-height:1.1;text-align:center;}
 .tops__img{height:150px;display:grid;place-items:center;font-size:72px;}
 .tops__info{background:#fff;border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;}
@@ -97,7 +99,8 @@
 .tops__stars small{color:var(--tops-muted);}
 .tops__price{font-weight:600;}
 .tops__add{display:block;width:calc(100% - 0px);margin-top:12px;background:var(--tops-green);color:#fff;border:0;border-radius:4px;padding:8px;font-size:13px;}
-@media(max-width:700px){.tops{padding:32px 16px;}.tops__arrow{display:none;}}
+@media(max-width:900px){.tops__card{flex-basis:calc((100% - 24px)/2);}}
+@media(max-width:600px){.tops{padding:32px 12px;}.tops__row{gap:4px;}.tops__card{flex-basis:100%;}}
 
 </style>
 <style>
@@ -116,9 +119,11 @@
 .trnd__tab{border:0;background:transparent;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:500;}
 .trnd__tab--active{background:var(--trnd-green);color:#fff;}
 .trnd__row{display:flex;align-items:center;gap:12px;max-width:1100px;margin:0 auto;}
-.trnd__grid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;}
-.trnd__arrow{color:var(--trnd-green);font-size:22px;border:0;background:none;}
-.trnd__card{border-radius:10px;padding:14px;position:relative;}
+.trnd__grid{flex:1;min-width:0;display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;}
+.trnd__grid::-webkit-scrollbar{display:none;}
+.trnd__arrow{color:var(--trnd-green);font-size:22px;border:0;background:none;padding:8px;transition:transform .15s;}
+.trnd__arrow:hover{transform:scale(1.2);}
+.trnd__card{flex:0 0 calc((100% - 48px)/3);scroll-snap-align:start;border-radius:10px;padding:14px;position:relative;}
 .trnd__badge{position:absolute;top:12px;right:12px;background:var(--trnd-green);color:#fff;border-radius:50%;width:38px;height:38px;display:grid;place-items:center;font-size:9px;line-height:1.1;text-align:center;}
 .trnd__img{height:150px;display:grid;place-items:center;font-size:72px;}
 .trnd__info{background:#fff;border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;}
@@ -127,7 +132,8 @@
 .trnd__stars small{color:var(--trnd-muted);}
 .trnd__price{font-weight:600;}
 .trnd__add{display:block;width:calc(100% - 0px);margin-top:12px;background:var(--trnd-green);color:#fff;border:0;border-radius:4px;padding:8px;font-size:13px;}
-@media(max-width:700px){.trnd{padding:32px 16px;}.trnd__arrow{display:none;}}
+@media(max-width:900px){.trnd__card{flex-basis:calc((100% - 24px)/2);}}
+@media(max-width:600px){.trnd{padding:32px 12px;}.trnd__row{gap:4px;}.trnd__card{flex-basis:100%;}}
 
 </style>
 <style>
@@ -144,7 +150,7 @@
 .newl__title{text-align:center;font-size:20px;font-weight:600;margin-bottom:28px;}
 .newl__banner{background:var(--newl-purple);color:#fff;border-radius:6px;padding:36px 56px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;position:relative;max-width:1100px;margin:0 auto;}
 .newl__arches{display:flex;gap:14px;align-items:flex-end;}
-.newl__arch{width:110px;background:#fff;border-radius:70px;display:grid;place-items:center;font-size:48px;}
+.newl__arch{width:110px;background:#fff;border-radius:70px;display:grid;place-items:center;font-size:48px;transition:background-color .3s;}
 .newl__arch--1{height:200px;}.newl__arch--2{height:170px;}
 .newl__content{flex:1 1 300px;max-width:420px;}
 .newl__name{font-size:28px;font-weight:600;margin-bottom:10px;}
@@ -255,6 +261,7 @@
       <button class="tops__tab" type="button" data-tops-tab="1">Watches</button>
   </div>
   <div class="tops__row">
+    <button class="tops__arrow" id="tops-prev" type="button" aria-label="Previous">&#10094;</button>
     <div class="tops__grid" id="tops-grid">
       <article class="tops__card" style="background:#e6f7ef">
         <span class="tops__badge">Save<br>50%</span>
@@ -286,8 +293,38 @@
         </div>
         <button class="tops__add" type="button">Add to cart</button>
       </article>
+      <article class="tops__card" style="background:#fde8d8">
+        <span class="tops__badge">Save<br>50%</span>
+        <div class="tops__img">&#127911;</div>
+        <div class="tops__info">
+          <div class="tops__name">Beat Rockerz 332</div>
+          <div class="tops__stars">&#9733;&#9733;&#9733;&#9733;&#9733; <small>1 reviews</small></div>
+          <div class="tops__price">$20</div>
+        </div>
+        <button class="tops__add" type="button">Add to cart</button>
+      </article>
+      <article class="tops__card" style="background:#e3e9fb">
+        <span class="tops__badge">Save<br>50%</span>
+        <div class="tops__img">&#127911;</div>
+        <div class="tops__info">
+          <div class="tops__name">Beat Rockerz 332</div>
+          <div class="tops__stars">&#9733;&#9733;&#9733;&#9733;&#9733; <small>1 reviews</small></div>
+          <div class="tops__price">$20</div>
+        </div>
+        <button class="tops__add" type="button">Add to cart</button>
+      </article>
+      <article class="tops__card" style="background:#e6f7ef">
+        <span class="tops__badge">Save<br>50%</span>
+        <div class="tops__img">&#127911;</div>
+        <div class="tops__info">
+          <div class="tops__name">Beat Rockerz 332</div>
+          <div class="tops__stars">&#9733;&#9733;&#9733;&#9733;&#9733; <small>1 reviews</small></div>
+          <div class="tops__price">$20</div>
+        </div>
+        <button class="tops__add" type="button">Add to cart</button>
+      </article>
     </div>
-    <button class="tops__arrow" type="button" aria-label="Next">&#10095;</button>
+    <button class="tops__arrow" id="tops-next" type="button" aria-label="Next">&#10095;</button>
   </div>
 </section>
 <section class="trnd" id="trnd-root">
@@ -298,6 +335,7 @@
       <button class="trnd__tab" type="button" data-trnd-tab="2">Wired</button>
   </div>
   <div class="trnd__row">
+    <button class="trnd__arrow" id="trnd-prev" type="button" aria-label="Previous">&#10094;</button>
     <div class="trnd__grid" id="trnd-grid">
       <article class="trnd__card" style="background:#dfeaf8">
         <span class="trnd__badge">Save<br>50%</span>
@@ -329,33 +367,63 @@
         </div>
         <button class="trnd__add" type="button">Add to cart</button>
       </article>
+      <article class="trnd__card" style="background:#f6e3f1">
+        <span class="trnd__badge">Save<br>50%</span>
+        <div class="trnd__img">&#127911;</div>
+        <div class="trnd__info">
+          <div class="trnd__name">Beat Rockerz 332</div>
+          <div class="trnd__stars">&#9733;&#9733;&#9733;&#9733;&#9733; <small>1 reviews</small></div>
+          <div class="trnd__price">$20</div>
+        </div>
+        <button class="trnd__add" type="button">Add to cart</button>
+      </article>
+      <article class="trnd__card" style="background:#e8f1d6">
+        <span class="trnd__badge">Save<br>50%</span>
+        <div class="trnd__img">&#127911;</div>
+        <div class="trnd__info">
+          <div class="trnd__name">Beat Rockerz 332</div>
+          <div class="trnd__stars">&#9733;&#9733;&#9733;&#9733;&#9733; <small>1 reviews</small></div>
+          <div class="trnd__price">$20</div>
+        </div>
+        <button class="trnd__add" type="button">Add to cart</button>
+      </article>
+      <article class="trnd__card" style="background:#dfeaf8">
+        <span class="trnd__badge">Save<br>50%</span>
+        <div class="trnd__img">&#127911;</div>
+        <div class="trnd__info">
+          <div class="trnd__name">Beat Rockerz 332</div>
+          <div class="trnd__stars">&#9733;&#9733;&#9733;&#9733;&#9733; <small>1 reviews</small></div>
+          <div class="trnd__price">$20</div>
+        </div>
+        <button class="trnd__add" type="button">Add to cart</button>
+      </article>
     </div>
-    <button class="trnd__arrow" type="button" aria-label="Next">&#10095;</button>
+    <button class="trnd__arrow" id="trnd-next" type="button" aria-label="Next">&#10095;</button>
   </div>
 </section>
 <section class="newl" id="newl-root">
   <h2 class="newl__title">New Launches</h2>
   <div class="newl__banner">
-    <button class="newl__nav newl__nav--prev" type="button" aria-label="Previous">&#10094;</button>
+    <button class="newl__nav newl__nav--prev" id="newl-prev" type="button" aria-label="Previous">&#10094;</button>
     <div class="newl__arches">
-      <div class="newl__arch newl__arch--1">&#127911;</div>
-      <div class="newl__arch newl__arch--2">&#127911;</div>
+      <div class="newl__arch newl__arch--1" id="newl-arch-1">&#127911;</div>
+      <div class="newl__arch newl__arch--2" id="newl-arch-2">&#127911;</div>
     </div>
     <div class="newl__content">
-      <h3 class="newl__name">Airdrop 500 Anc</h3>
+      <h3 class="newl__name" id="newl-name">Airdrop 500 Anc</h3>
       <p class="newl__desc">Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a product.</p>
-      <p class="newl__price">Price : <b>$45.99</b></p>
+      <p class="newl__price">Price : <b id="newl-price">$45.99</b></p>
       <div class="newl__colors" id="newl-colors">
-        <button class="newl__dot newl__dot--active" style="background:#111" type="button" aria-label="Black"></button>
-        <button class="newl__dot" style="background:#f6c915" type="button" aria-label="Yellow"></button>
-        <button class="newl__dot" style="background:#2f6bff" type="button" aria-label="Blue"></button>
+        <button class="newl__dot newl__dot--active" data-newl-color="#111111" style="background:#111111" type="button" aria-label="Black"></button>
+        <button class="newl__dot" data-newl-color="#f6c915" style="background:#f6c915" type="button" aria-label="Yellow"></button>
+        <button class="newl__dot" data-newl-color="#2f6bff" style="background:#2f6bff" type="button" aria-label="Blue"></button>
       </div>
       <div class="newl__actions">
         <button class="newl__btn" type="button">Add to cart</button>
         <a class="newl__link" href="#">Explore More</a>
       </div>
     </div>
-    <button class="newl__nav newl__nav--next" type="button" aria-label="Next">&#10095;</button>
+    <button class="newl__nav newl__nav--next" id="newl-next" type="button" aria-label="Next">&#10095;</button>
   </div>
 </section>
 <footer class="ftr" id="ftr-root">
@@ -394,6 +462,25 @@
       tab.classList.add('tops__tab--active');
     });
   });
+
+  // chapga / o'ngga aylantirish
+  var grid = document.getElementById('tops-grid');
+  var prev = document.getElementById('tops-prev');
+  var next = document.getElementById('tops-next');
+  function step() {
+    var card = grid.querySelector('.tops__card');
+    var gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+    return card.offsetWidth + gap;
+  }
+  function atEnd() { return grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4; }
+  next.addEventListener('click', function () {
+    if (atEnd()) grid.scrollTo({ left: 0, behavior: 'smooth' });
+    else grid.scrollBy({ left: step(), behavior: 'smooth' });
+  });
+  prev.addEventListener('click', function () {
+    if (grid.scrollLeft <= 4) grid.scrollTo({ left: grid.scrollWidth, behavior: 'smooth' });
+    else grid.scrollBy({ left: -step(), behavior: 'smooth' });
+  });
 })();
 </script>
 <script>
@@ -407,19 +494,60 @@
       tab.classList.add('trnd__tab--active');
     });
   });
+
+  // chapga / o'ngga aylantirish
+  var grid = document.getElementById('trnd-grid');
+  var prev = document.getElementById('trnd-prev');
+  var next = document.getElementById('trnd-next');
+  function step() {
+    var card = grid.querySelector('.trnd__card');
+    var gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+    return card.offsetWidth + gap;
+  }
+  function atEnd() { return grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4; }
+  next.addEventListener('click', function () {
+    if (atEnd()) grid.scrollTo({ left: 0, behavior: 'smooth' });
+    else grid.scrollBy({ left: step(), behavior: 'smooth' });
+  });
+  prev.addEventListener('click', function () {
+    if (grid.scrollLeft <= 4) grid.scrollTo({ left: grid.scrollWidth, behavior: 'smooth' });
+    else grid.scrollBy({ left: -step(), behavior: 'smooth' });
+  });
 })();
 </script>
 <script>
 (function () {
-  var wrap = document.getElementById('newl-colors');
-  if (!wrap) return;
-  var dots = wrap.querySelectorAll('.newl__dot');
-  dots.forEach(function (d) {
-    d.addEventListener('click', function () {
-      dots.forEach(function (x) { x.classList.remove('newl__dot--active'); });
-      d.classList.add('newl__dot--active');
-    });
-  });
+  var root = document.getElementById('newl-root');
+  if (!root) return;
+
+  // --- rang tanlash: rasmning orqa foni bosilgan rangga o'zgaradi ---
+  var dots = root.querySelectorAll('[data-newl-color]');
+  var arches = [document.getElementById('newl-arch-1'), document.getElementById('newl-arch-2')];
+  function setColor(dot) {
+    dots.forEach(function (x) { x.classList.remove('newl__dot--active'); });
+    dot.classList.add('newl__dot--active');
+    arches.forEach(function (a) { a.style.backgroundColor = dot.getAttribute('data-newl-color'); });
+  }
+  dots.forEach(function (d) { d.addEventListener('click', function () { setColor(d); }); });
+
+  // --- chapga / o'ngga aylantirish ---
+  var slides = [
+    { name: 'Airdrop 500 Anc', price: '$45.99', icons: ['\uD83C\uDFA7', '\uD83C\uDFA7'] },
+    { name: 'Buds Pro 200',    price: '$59.99', icons: ['\uD83C\uDFB5', '\uD83C\uDFA7'] },
+    { name: 'Bass Boost X',    price: '$39.99', icons: ['\uD83D\uDD0A', '\uD83C\uDFA7'] }
+  ];
+  var i = 0;
+  var nameEl = document.getElementById('newl-name');
+  var priceEl = document.getElementById('newl-price');
+  function show(n) {
+    i = (n + slides.length) % slides.length;
+    nameEl.textContent = slides[i].name;
+    priceEl.textContent = slides[i].price;
+    arches[0].textContent = slides[i].icons[0];
+    arches[1].textContent = slides[i].icons[1];
+  }
+  document.getElementById('newl-prev').addEventListener('click', function () { show(i - 1); });
+  document.getElementById('newl-next').addEventListener('click', function () { show(i + 1); });
 })();
 </script>
 </body></html>

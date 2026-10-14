@@ -22,9 +22,11 @@
 .tops__tab{border:0;background:transparent;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:500;}
 .tops__tab--active{background:var(--tops-green);color:#fff;}
 .tops__row{display:flex;align-items:center;gap:12px;max-width:1100px;margin:0 auto;}
-.tops__grid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;}
-.tops__arrow{color:var(--tops-green);font-size:22px;border:0;background:none;}
-.tops__card{border-radius:10px;padding:14px;position:relative;}
+.tops__grid{flex:1;min-width:0;display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;}
+.tops__grid::-webkit-scrollbar{display:none;}
+.tops__arrow{color:var(--tops-green);font-size:22px;border:0;background:none;padding:8px;transition:transform .15s;}
+.tops__arrow:hover{transform:scale(1.2);}
+.tops__card{flex:0 0 calc((100% - 48px)/3);scroll-snap-align:start;border-radius:10px;padding:14px;position:relative;}
 .tops__badge{position:absolute;top:12px;right:12px;background:var(--tops-green);color:#fff;border-radius:50%;width:38px;height:38px;display:grid;place-items:center;font-size:9px;line-height:1.1;text-align:center;}
 .tops__img{height:150px;display:grid;place-items:center;font-size:72px;}
 .tops__info{background:#fff;border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12px;}
@@ -33,7 +35,8 @@
 .tops__stars small{color:var(--tops-muted);}
 .tops__price{font-weight:600;}
 .tops__add{display:block;width:calc(100% - 0px);margin-top:12px;background:var(--tops-green);color:#fff;border:0;border-radius:4px;padding:8px;font-size:13px;}
-@media(max-width:700px){.tops{padding:32px 16px;}.tops__arrow{display:none;}}
+@media(max-width:900px){.tops__card{flex-basis:calc((100% - 24px)/2);}}
+@media(max-width:600px){.tops{padding:32px 12px;}.tops__row{gap:4px;}.tops__card{flex-basis:100%;}}
 
 </style>
 <!-- ===== SECTION CSS END (tops) ===== -->
@@ -47,6 +50,7 @@
       <button class="tops__tab" type="button" data-tops-tab="1">Watches</button>
   </div>
   <div class="tops__row">
+    <button class="tops__arrow" id="tops-prev" type="button" aria-label="Previous">&#10094;</button>
     <div class="tops__grid" id="tops-grid">
       <article class="tops__card" style="background:#e6f7ef">
         <span class="tops__badge">Save<br>50%</span>
@@ -78,8 +82,38 @@
         </div>
         <button class="tops__add" type="button">Add to cart</button>
       </article>
+      <article class="tops__card" style="background:#fde8d8">
+        <span class="tops__badge">Save<br>50%</span>
+        <div class="tops__img">&#127911;</div>
+        <div class="tops__info">
+          <div class="tops__name">Beat Rockerz 332</div>
+          <div class="tops__stars">&#9733;&#9733;&#9733;&#9733;&#9733; <small>1 reviews</small></div>
+          <div class="tops__price">$20</div>
+        </div>
+        <button class="tops__add" type="button">Add to cart</button>
+      </article>
+      <article class="tops__card" style="background:#e3e9fb">
+        <span class="tops__badge">Save<br>50%</span>
+        <div class="tops__img">&#127911;</div>
+        <div class="tops__info">
+          <div class="tops__name">Beat Rockerz 332</div>
+          <div class="tops__stars">&#9733;&#9733;&#9733;&#9733;&#9733; <small>1 reviews</small></div>
+          <div class="tops__price">$20</div>
+        </div>
+        <button class="tops__add" type="button">Add to cart</button>
+      </article>
+      <article class="tops__card" style="background:#e6f7ef">
+        <span class="tops__badge">Save<br>50%</span>
+        <div class="tops__img">&#127911;</div>
+        <div class="tops__info">
+          <div class="tops__name">Beat Rockerz 332</div>
+          <div class="tops__stars">&#9733;&#9733;&#9733;&#9733;&#9733; <small>1 reviews</small></div>
+          <div class="tops__price">$20</div>
+        </div>
+        <button class="tops__add" type="button">Add to cart</button>
+      </article>
     </div>
-    <button class="tops__arrow" type="button" aria-label="Next">&#10095;</button>
+    <button class="tops__arrow" id="tops-next" type="button" aria-label="Next">&#10095;</button>
   </div>
 </section>
 <!-- ===== SECTION HTML END (tops) ===== -->
@@ -94,6 +128,25 @@
       tabs.forEach(function (t) { t.classList.remove('tops__tab--active'); });
       tab.classList.add('tops__tab--active');
     });
+  });
+
+  // chapga / o'ngga aylantirish
+  var grid = document.getElementById('tops-grid');
+  var prev = document.getElementById('tops-prev');
+  var next = document.getElementById('tops-next');
+  function step() {
+    var card = grid.querySelector('.tops__card');
+    var gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+    return card.offsetWidth + gap;
+  }
+  function atEnd() { return grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4; }
+  next.addEventListener('click', function () {
+    if (atEnd()) grid.scrollTo({ left: 0, behavior: 'smooth' });
+    else grid.scrollBy({ left: step(), behavior: 'smooth' });
+  });
+  prev.addEventListener('click', function () {
+    if (grid.scrollLeft <= 4) grid.scrollTo({ left: grid.scrollWidth, behavior: 'smooth' });
+    else grid.scrollBy({ left: -step(), behavior: 'smooth' });
   });
 })();
 </script>

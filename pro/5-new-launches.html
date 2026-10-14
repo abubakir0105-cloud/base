@@ -20,7 +20,7 @@
 .newl__title{text-align:center;font-size:20px;font-weight:600;margin-bottom:28px;}
 .newl__banner{background:var(--newl-purple);color:#fff;border-radius:6px;padding:36px 56px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;position:relative;max-width:1100px;margin:0 auto;}
 .newl__arches{display:flex;gap:14px;align-items:flex-end;}
-.newl__arch{width:110px;background:#fff;border-radius:70px;display:grid;place-items:center;font-size:48px;}
+.newl__arch{width:110px;background:#fff;border-radius:70px;display:grid;place-items:center;font-size:48px;transition:background-color .3s;}
 .newl__arch--1{height:200px;}.newl__arch--2{height:170px;}
 .newl__content{flex:1 1 300px;max-width:420px;}
 .newl__name{font-size:28px;font-weight:600;margin-bottom:10px;}
@@ -45,41 +45,63 @@
 <section class="newl" id="newl-root">
   <h2 class="newl__title">New Launches</h2>
   <div class="newl__banner">
-    <button class="newl__nav newl__nav--prev" type="button" aria-label="Previous">&#10094;</button>
+    <button class="newl__nav newl__nav--prev" id="newl-prev" type="button" aria-label="Previous">&#10094;</button>
     <div class="newl__arches">
-      <div class="newl__arch newl__arch--1">&#127911;</div>
-      <div class="newl__arch newl__arch--2">&#127911;</div>
+      <div class="newl__arch newl__arch--1" id="newl-arch-1">&#127911;</div>
+      <div class="newl__arch newl__arch--2" id="newl-arch-2">&#127911;</div>
     </div>
     <div class="newl__content">
-      <h3 class="newl__name">Airdrop 500 Anc</h3>
+      <h3 class="newl__name" id="newl-name">Airdrop 500 Anc</h3>
       <p class="newl__desc">Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a product.</p>
-      <p class="newl__price">Price : <b>$45.99</b></p>
+      <p class="newl__price">Price : <b id="newl-price">$45.99</b></p>
       <div class="newl__colors" id="newl-colors">
-        <button class="newl__dot newl__dot--active" style="background:#111" type="button" aria-label="Black"></button>
-        <button class="newl__dot" style="background:#f6c915" type="button" aria-label="Yellow"></button>
-        <button class="newl__dot" style="background:#2f6bff" type="button" aria-label="Blue"></button>
+        <button class="newl__dot newl__dot--active" data-newl-color="#111111" style="background:#111111" type="button" aria-label="Black"></button>
+        <button class="newl__dot" data-newl-color="#f6c915" style="background:#f6c915" type="button" aria-label="Yellow"></button>
+        <button class="newl__dot" data-newl-color="#2f6bff" style="background:#2f6bff" type="button" aria-label="Blue"></button>
       </div>
       <div class="newl__actions">
         <button class="newl__btn" type="button">Add to cart</button>
         <a class="newl__link" href="#">Explore More</a>
       </div>
     </div>
-    <button class="newl__nav newl__nav--next" type="button" aria-label="Next">&#10095;</button>
+    <button class="newl__nav newl__nav--next" id="newl-next" type="button" aria-label="Next">&#10095;</button>
   </div>
 </section>
 <!-- ===== SECTION HTML END (newl) ===== -->
 <!-- ===== SECTION JS START (newl) ===== -->
 <script>
 (function () {
-  var wrap = document.getElementById('newl-colors');
-  if (!wrap) return;
-  var dots = wrap.querySelectorAll('.newl__dot');
-  dots.forEach(function (d) {
-    d.addEventListener('click', function () {
-      dots.forEach(function (x) { x.classList.remove('newl__dot--active'); });
-      d.classList.add('newl__dot--active');
-    });
-  });
+  var root = document.getElementById('newl-root');
+  if (!root) return;
+
+  // --- rang tanlash: rasmning orqa foni bosilgan rangga o'zgaradi ---
+  var dots = root.querySelectorAll('[data-newl-color]');
+  var arches = [document.getElementById('newl-arch-1'), document.getElementById('newl-arch-2')];
+  function setColor(dot) {
+    dots.forEach(function (x) { x.classList.remove('newl__dot--active'); });
+    dot.classList.add('newl__dot--active');
+    arches.forEach(function (a) { a.style.backgroundColor = dot.getAttribute('data-newl-color'); });
+  }
+  dots.forEach(function (d) { d.addEventListener('click', function () { setColor(d); }); });
+
+  // --- chapga / o'ngga aylantirish ---
+  var slides = [
+    { name: 'Airdrop 500 Anc', price: '$45.99', icons: ['\uD83C\uDFA7', '\uD83C\uDFA7'] },
+    { name: 'Buds Pro 200',    price: '$59.99', icons: ['\uD83C\uDFB5', '\uD83C\uDFA7'] },
+    { name: 'Bass Boost X',    price: '$39.99', icons: ['\uD83D\uDD0A', '\uD83C\uDFA7'] }
+  ];
+  var i = 0;
+  var nameEl = document.getElementById('newl-name');
+  var priceEl = document.getElementById('newl-price');
+  function show(n) {
+    i = (n + slides.length) % slides.length;
+    nameEl.textContent = slides[i].name;
+    priceEl.textContent = slides[i].price;
+    arches[0].textContent = slides[i].icons[0];
+    arches[1].textContent = slides[i].icons[1];
+  }
+  document.getElementById('newl-prev').addEventListener('click', function () { show(i - 1); });
+  document.getElementById('newl-next').addEventListener('click', function () { show(i + 1); });
 })();
 </script>
 <!-- ===== SECTION JS END (newl) ===== -->
