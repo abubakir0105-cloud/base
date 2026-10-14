@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dekart ko'paytma kalkulyatori</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F7F3E8; --paper-dark: #EFE9D8;
+    --grid-line: #CBD2E3; --grid-line-soft: #DCE1EE;
+    --ink: #1B2A4A; --ink-soft: #5B6785;
+    --accent: #B8433A; --accent2: #2F6F5E; --accent2-dark: #235345;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1A1E29; --paper-dark: #14171F;
+      --grid-line: #2D3448; --grid-line-soft: #262C3D;
+      --ink: #EDEAE0; --ink-soft: #A6AEC7;
+      --accent: #E2685C; --accent2: #6FBBA3; --accent2-dark: #8fd0bb;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1A1E29; --paper-dark: #14171F;
+    --grid-line: #2D3448; --grid-line-soft: #262C3D;
+    --ink: #EDEAE0; --ink-soft: #A6AEC7;
+    --accent: #E2685C; --accent2: #6FBBA3; --accent2-dark: #8fd0bb;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background:
+      linear-gradient(var(--grid-line-soft) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(90deg, var(--grid-line-soft) 1px, transparent 1px) 0 0 / 28px 28px,
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    min-height: 100%;
+    padding: 40px 20px 60px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  header { margin-bottom: 34px; }
+  h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em; }
+  header p { color: var(--ink-soft); font-size: 16px; margin: 0; max-width: 58ch; line-height: 1.5; }
+  .card { background: var(--paper-dark); border: 1px solid var(--grid-line); border-radius: 4px; padding: 22px; margin-bottom: 22px; }
+  .card h2 { font-size: 15px; font-weight: 600; margin: 0 0 16px; color: var(--ink-soft); }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .count-row { display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--ink-soft); }
+  .stepper { display: inline-flex; align-items: center; border: 1px solid var(--grid-line); border-radius: 3px; overflow: hidden; background: var(--paper); }
+  .stepper button { background: none; border: none; color: var(--ink); width: 28px; height: 28px; font-size: 15px; cursor: pointer; font-family: 'JetBrains Mono', monospace; }
+  .stepper button:hover { background: var(--grid-line-soft); }
+  .stepper span { width: 28px; text-align: center; font-weight: 600; color: var(--ink); border-left: 1px solid var(--grid-line); border-right: 1px solid var(--grid-line); padding: 5px 0; font-size: 14px; }
+  .set-list { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+  .set-box { border: 1px solid var(--grid-line); border-radius: 3px; background: var(--paper); padding: 12px 14px; }
+  .set-box .set-box { background: var(--paper-dark); border-left: 3px solid var(--accent2); margin-top: 8px; }
+  .set-box .set-box .set-box { background: var(--paper); }
+  .set-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--ink-soft); }
+  .set-title { font-weight: 700; color: var(--ink); font-size: 15px; }
+  .el-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .el-row { display: flex; align-items: flex-start; gap: 8px; }
+  .idx { width: 22px; padding-top: 10px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); }
+  .el-body { flex: 1; min-width: 0; }
+  .el-line { display: flex; gap: 8px; align-items: center; }
+  select, .el-line input {
+    height: 38px; font-family: 'JetBrains Mono', monospace; font-size: 14px;
+    border: 1px solid var(--grid-line); border-radius: 3px; background: var(--paper); color: var(--ink);
+  }
+  select { padding: 0 6px; cursor: pointer; }
+  .el-line input { flex: 1; min-width: 0; padding: 0 10px; }
+  .el-line input:focus, select:focus { outline: none; border-color: var(--accent2); }
+  .empty { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; }
+  .hint { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink-soft); margin: 14px 0 0; line-height: 1.5; }
+  .compute-row { text-align: center; margin: 4px 0 6px; }
+  .compute-btn {
+    font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 600;
+    padding: 12px 30px; background: var(--accent2); color: #fff;
+    border: none; border-radius: 3px; cursor: pointer;
+  }
+  .compute-btn:hover { background: var(--accent2-dark); }
+  .result-area { margin-top: 18px; min-height: 40px; }
+  .result-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-soft); text-align: center; margin-bottom: 6px; overflow-wrap: anywhere; }
+  .result-scalar { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 600; color: var(--accent); margin-bottom: 14px; }
+  .set-defs { margin: 0 0 18px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  .tuples { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .tuple {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    color: var(--accent); background: var(--paper);
+    border: 1px solid var(--grid-line-soft); border-radius: 3px; padding: 7px 10px;
+  }
+  .note { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink-soft); margin-top: 14px; }
+  .error-msg { text-align: center; color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+  .op-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
+  .op-row.center { justify-content: center; }
+  .op-btn { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; padding: 8px 14px; border: 1px solid var(--grid-line); background: var(--paper); color: var(--ink); border-radius: 3px; cursor: pointer; }
+  .op-btn:hover { border-color: var(--ink-soft); }
+  .op-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  @media (max-width: 520px) {
+    .el-line { flex-wrap: wrap; }
+    .el-line input { flex-basis: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Dekart ko'paytma kalkulyatori</h1>
+    <p>To'plamlar sonini, har bir to'plamdagi elementlar sonini o'zingiz belgilang. Element oddiy qiymat yoki yana bir to'plam bo'lishi mumkin.</p>
+  </header>
+
+  <div class="card">
+    <h2>To'plamlar</h2>
+    <div class="op-row" id="mode-row" style="margin-top:0">
+      <button class="op-btn active" data-act="mode" data-mode="diff">Turli to'plamlar</button>
+      <button class="op-btn" data-act="mode" data-mode="power">Bir xil to'plam (A × A × ...)</button>
+    </div>
+    <div class="count-row" style="margin-top:14px">
+      <label id="count-label">To'plamlar soni</label>
+      <div class="stepper">
+        <button data-act="top" data-d="-1" aria-label="Kamaytirish">−</button>
+        <span id="top-count">2</span>
+        <button data-act="top" data-d="1" aria-label="Ko'paytirish">+</button>
+      </div>
+    </div>
+    <div class="set-list" id="set-list"></div>
+    <p class="hint">Elementni "to'plam" qilib belgilasangiz, uning ichiga yana elementlar qo'shish mumkin. {1, 2} va {2, 1} bir xil to'plam hisoblanadi, takroriy elementlar bir marta olinadi.</p>
+  </div>
+
+  <div class="card">
+    <div class="compute-row">
+      <button class="compute-btn" id="compute-btn">Hisoblash</button>
+    </div>
+    <div class="op-row center" id="filter-row">
+      <button class="op-btn active" data-act="filter" data-filter="all">Hammasi</button>
+      <button class="op-btn" data-act="filter" data-filter="distinct">Takrorsiz</button>
+      <button class="op-btn" data-act="filter" data-filter="repeat">Takrorli</button>
+    </div>
+    <p class="hint" style="text-align:center">Takrorsiz: kortej ichida bir xil element ikki marta uchramaydi (aaa, aba chiqib ketadi). Takrorli: kamida bitta element takrorlangan kortejlar.</p>
+    <div class="result-area" id="result-area"></div>
+  </div>
+</div>
+
+<script>
+const NAMES = ['A', 'B', 'C', 'D', 'E', 'F'];
+const MAX_SHOW = 3000;
+const MAX_ITEMS = 8;
+const MAX_DEPTH = 3;
+
+const val = v => ({ t: 'v', v });
+const set = items => ({ t: 's', items });
+
+let mode = 'diff', powerN = 3, filter = 'all';
+
+const sets = [
+  set([val('1'), val('2')]),
+  set([val('x'), set([val('a'), val('b')])])
+];
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// path "0.1.2": 0 - yuqori to'plam, keyin element indekslari
+function getNode(path) {
+  const p = path.split('.').map(Number);
+  let node = sets[p[0]];
+  for (let i = 1; i < p.length; i++) node = node.items[p[i]];
+  return node;
+}
+
+function stepper(path, n) {
+  return '<div class="stepper"><button data-act="cnt" data-path="' + path + '" data-d="-1">−</button>' +
+    '<span>' + n + '</span>' +
+    '<button data-act="cnt" data-path="' + path + '" data-d="1">+</button></div>';
+}
+
+function setBox(node, path, title, depth) {
+  let h = '<div class="set-box"><div class="set-head"><span class="set-title">' + title + '</span>' +
+    '<span>elementlar soni</span>' + stepper(path, node.items.length) + '</div>';
+  if (!node.items.length) {
+    h += '<div class="empty">Bo\'sh to\'plam ∅</div>';
+  } else {
+    h += '<div class="el-list">';
+    node.items.forEach((el, j) => {
+      const p = path + '.' + j;
+      h += '<div class="el-row"><div class="idx">' + (j + 1) + '</div><div class="el-body">';
+      h += '<div class="el-line"><select data-act="type" data-path="' + p + '">' +
+        '<option value="v"' + (el.t === 'v' ? ' selected' : '') + '>qiymat</option>' +
+        (depth < MAX_DEPTH ? '<option value="s"' + (el.t === 's' ? ' selected' : '') + '>to\'plam</option>' : '') +
+        '</select>';
+      if (el.t === 'v') {
+        h += '<input type="text" data-act="val" data-path="' + p + '" value="' + esc(el.v) + '" placeholder="qiymat">';
+      }
+      h += '</div>';
+      if (el.t === 's') h += setBox(el, p, 'ichki to\'plam', depth + 1);
+      h += '</div></div>';
+    });
+    h += '</div>';
+  }
+  return h + '</div>';
+}
+
+function render() {
+  const pw = mode === 'power';
+  document.getElementById('top-count').textContent = pw ? powerN : sets.length;
+  document.getElementById('count-label').textContent = pw ? 'Ko\'paytuvchilar soni' : 'To\'plamlar soni';
+  const shown = pw ? [sets[0]] : sets;
+  document.getElementById('set-list').innerHTML =
+    shown.map((s, i) => setBox(s, String(i), NAMES[i] + ' =', 1)).join('');
+  document.querySelectorAll('[data-act="mode"]').forEach(x => x.classList.toggle('active', x.dataset.mode === mode));
+  document.querySelectorAll('[data-act="filter"]').forEach(x => x.classList.toggle('active', x.dataset.filter === filter));
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]');
+  if (!b) return;
+  const act = b.dataset.act, d = Number(b.dataset.d);
+  if (act === 'mode') {
+    mode = b.dataset.mode;
+    render();
+    document.getElementById('result-area').innerHTML = '';
+  } else if (act === 'filter') {
+    filter = b.dataset.filter;
+    render();
+    compute();
+  } else if (act === 'top') {
+    if (mode === 'power') {
+      const n = powerN + d;
+      if (n < 2 || n > 8) return;
+      powerN = n;
+    } else {
+      const n = sets.length + d;
+      if (n < 2 || n > 6) return;
+      if (d > 0) sets.push(set([])); else sets.pop();
+    }
+    render();
+    document.getElementById('result-area').innerHTML = '';
+  } else if (act === 'cnt') {
+    const node = getNode(b.dataset.path);
+    const n = node.items.length + d;
+    if (n < 0 || n > MAX_ITEMS) return;
+    if (d > 0) node.items.push(val('')); else node.items.pop();
+    render();
+  }
+});
+
+document.addEventListener('change', e => {
+  if (e.target.dataset.act !== 'type') return;
+  const node = getNode(e.target.dataset.path);
+  if (e.target.value === 's') { node.t = 's'; node.items = []; delete node.v; }
+  else { node.t = 'v'; node.v = ''; delete node.items; }
+  render();
+});
+
+document.addEventListener('input', e => {
+  if (e.target.dataset.act !== 'val') return;
+  getNode(e.target.dataset.path).v = e.target.value;
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.repeat && e.target.dataset && e.target.dataset.act === 'val') compute();
+});
+
+// normalize: elementni {key, label} ko'rinishiga keltiradi.
+// To'plamda tartib va takror hisobga olinmaydi, shuning uchun key tartiblangan holda tuziladi.
+function normalize(el) {
+  if (el.t === 'v') {
+    const v = el.v.trim();
+    return v === '' ? null : { key: 'v:' + v, label: v };
+  }
+  return normSet(el.items);
+}
+
+function normSet(items) {
+  const seen = new Map();
+  items.forEach(it => {
+    const n = normalize(it);
+    if (n && !seen.has(n.key)) seen.set(n.key, n);
+  });
+  const list = [...seen.values()];
+  const keys = list.map(n => n.key).sort();
+  return {
+    key: 's:{' + keys.join('|') + '}',
+    label: list.length ? '{' + list.map(n => n.label).join(', ') + '}' : '∅',
+    list
+  };
+}
+
+const FILTER_NAMES = { all: 'hammasi', distinct: 'takrorsiz', repeat: 'takrorli' };
+const SCAN_LIMIT = 3000000;
+
+function compute() {
+  const area = document.getElementById('result-area');
+  let names, lists, defNames, defNorm;
+  if (mode === 'power') {
+    const A = normSet(sets[0].items);
+    names = new Array(powerN).fill('A');
+    lists = names.map(() => A.list);
+    defNames = ['A']; defNorm = [A];
+  } else {
+    defNorm = sets.map(s => normSet(s.items));
+    names = NAMES.slice(0, sets.length);
+    lists = defNorm.map(n => n.list);
+    defNames = names;
+  }
+  const title = names.join(' × ');
+
+  const defs = '<div class="set-defs">' + defNames.map((n, i) =>
+    '<div class="result-title">' + n + ' = ' + esc(defNorm[i].label) +
+    ' &nbsp; |' + n + '| = ' + defNorm[i].list.length + '</div>').join('') + '</div>';
+
+  if (lists.some(l => l.length === 0)) {
+    area.innerHTML = '<div class="result-title">' + title + '</div>' + defs +
+      '<div class="error-msg">Bo\'sh to\'plam bor, shuning uchun natija bo\'sh to\'plam (∅).</div>';
+    return;
+  }
+
+  const sizes = lists.map(l => l.length);
+  const total = sizes.reduce((a, b) => a * b, 1);
+  const all = filter === 'all';
+
+  if (!all && total > SCAN_LIMIT) {
+    area.innerHTML = '<div class="result-title">' + title + '</div>' + defs +
+      '<div class="error-msg">Kortejlar soni juda katta (' + total.toLocaleString('en-US') + '), filtrlab bo\'lmaydi. To\'plamlarni kichraytiring.</div>';
+    return;
+  }
+
+  // all bo'lsa faqat ko'rsatiladigan qismini aylanamiz, filtr bo'lsa hammasini tekshiramiz
+  const loops = all ? Math.min(total, MAX_SHOW) : total;
+  const idx = new Array(lists.length).fill(0);
+  let matched = 0, tuples = '';
+  for (let t = 0; t < loops; t++) {
+    let pass = true;
+    if (!all) {
+      const keys = new Set(idx.map((k, i) => lists[i][k].key));
+      const distinct = keys.size === idx.length;
+      pass = filter === 'distinct' ? distinct : !distinct;
+    }
+    if (pass) {
+      matched++;
+      if (matched <= MAX_SHOW) {
+        tuples += '<div class="tuple">(' + idx.map((k, i) => esc(lists[i][k].label)).join(', ') + ')</div>';
+      }
+    }
+    for (let p = idx.length - 1; p >= 0; p--) {
+      idx[p]++;
+      if (idx[p] < sizes[p]) break;
+      idx[p] = 0;
+    }
+  }
+  const count = all ? total : matched;
+
+  let html = '<div class="result-title">' + title + '</div>' + defs;
+  html += '<div class="result-scalar">' + count.toLocaleString('en-US') + ' ta kortej</div>';
+  html += '<div class="result-title">' + (all
+    ? '|' + title + '| = ' + sizes.join(' · ') + ' = ' + total.toLocaleString('en-US')
+    : 'Filtr: ' + FILTER_NAMES[filter] + '. Jami ' + total.toLocaleString('en-US') + ' tadan ' + count.toLocaleString('en-US') + ' tasi mos keldi') + '</div><br>';
+  if (count === 0) {
+    html += '<div class="error-msg">Bu filtrga mos kortej yo\'q.</div>';
+  } else {
+    html += '<div class="tuples">' + tuples + '</div>';
+    if (count > MAX_SHOW) html += '<div class="note">Dastlabki ' + MAX_SHOW.toLocaleString('en-US') + ' ta kortej ko\'rsatildi.</div>';
+  }
+  area.innerHTML = html;
+}
+
+document.getElementById('compute-btn').addEventListener('click', compute);
+
+render();
+compute();
+</script>
+</body>
+</html>
