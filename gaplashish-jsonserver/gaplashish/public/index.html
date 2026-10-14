@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gaplashish + Terminal</title>
+<style>
+:root{--bg:#f4f5f7;--fg:#1d2330;--dim:#6b7385;--ok:#0a7d3c;--chat:#0b5cc4;--me:#8a4b00;--err:#c0262d;--bar:#e4e7ec;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1117;--fg:#d6dde8;--dim:#7d8799;--ok:#4ade80;--chat:#6cb6ff;--me:#f0b45a;--err:#ff7b72;--bar:#161b22}}
+:root[data-theme="dark"]{--bg:#0d1117;--fg:#d6dde8;--dim:#7d8799;--ok:#4ade80;--chat:#6cb6ff;--me:#f0b45a;--err:#ff7b72;--bar:#161b22}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 ui-monospace,Menlo,Consolas,monospace;display:flex;flex-direction:column}
+header{background:var(--bar);padding:8px 14px;display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--dim)}
+header b{color:var(--fg)}
+#out{flex:1;overflow-y:auto;padding:12px 14px;white-space:pre-wrap;word-break:break-word}
+#out div{margin:1px 0}
+.ok{color:var(--ok)}.dim{color:var(--dim)}.err{color:var(--err)}.chat{color:var(--chat)}.me{color:var(--me)}
+form{display:flex;gap:8px;background:var(--bar);padding:10px 14px}
+#pr{color:var(--ok);white-space:nowrap}
+#in{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--fg);font:inherit}
+</style>
+</head>
+<body>
+<header><span><b>Gaplashish</b> · <span id="mode">menyu</span></span><span id="who"></span></header>
+<div id="out"></div>
+<form id="f" autocomplete="off"><span id="pr">&gt;</span><input id="in" autofocus autocapitalize="off" spellcheck="false" placeholder="person yoki terminal deb yozing"></form>
+<script>
+const out=document.getElementById('out'),inp=document.getElementById('in'),pr=document.getElementById('pr');
+let mode='menu',chatOn=true,cwd='/',db=null,myId=(()=>{try{let i=localStorage.getItem('gid');if(!i){i=Math.random().toString(36).slice(2);localStorage.setItem('gid',i)}return i}catch(e){return Math.random().toString(36).slice(2)}})(),name='Mehmon'+Math.floor(Math.random()*900+100);
+try{const n=localStorage.getItem('gname');if(n)name=n}catch(e){}
+const msgs=[];let first=true;
+const fsys=new Map([['/',null],['/home',null],['/home/salom.txt','Salom, terminalga xush kelibsiz!']]);
+const hist=[];let hi=0;
+
+function p(t,c){const d=document.createElement('div');if(c)d.className=c;d.textContent=t;out.appendChild(d);out.scrollTop=out.scrollHeight}
+function head(){document.getElementById('who').textContent='ism: '+name;
+ document.getElementById('mode').textContent=mode==='menu'?'menyu':mode==='person'?'person (odamlar bilan chat)':'terminal'+(chatOn?' · chat: yoqiq':' · chat: o\'chiq');
+ pr.textContent=mode==='terminal'?'user@'+(cwd==='/'?'/':cwd)+' $':mode==='person'?name+' ›':'>';
+ inp.placeholder=mode==='menu'?'person yoki terminal deb yozing':mode==='person'?'xabar yozing... (exit — chiqish)':'buyruq yozing... (help)'}
+function menu(){mode='menu';p('');p('Buyruqlar:','dim');p('  person    — boshqa odamlar bilan gaplashish','ok');p('  terminal  — terminal buyruqlarini yozish','ok');p('  name <ism> — ismingizni o\'zgartirish','ok');head()}
+function showMsg(m,live){const mine=m.uid===myId;p((live&&mode==='terminal'?'[chat] ':'')+(mine?'siz':m.name)+': '+m.text,mine?'me':'chat')}
+
+const API=location.origin+'/messages';
+async function send(text){
+ try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:myId,name,text:text.slice(0,500),ts:Date.now()})});if(!r.ok)throw new Error(r.status)}
+ catch(e){p('Yuborilmadi: server bilan aloqa yo\'q ('+e.message+')','err')}}
+
+function path(a){if(!a)return cwd;let r=a[0]==='/'?a:(cwd==='/'?'':cwd)+'/'+a;const s=[];for(const x of r.split('/')){if(!x||x==='.')continue;if(x==='..')s.pop();else s.push(x)}return '/'+s.join('/')}
+function kids(d){const pre=d==='/'?'/':d+'/';return [...fsys.keys()].filter(k=>k!=='/'&&k.startsWith(pre)&&!k.slice(pre.length).includes('/'))}
+
+function term(line){
+ const [c,...a]=line.trim().split(/\s+/),rest=a.join(' ');
+ switch(c){
+ case'':return;
+ case'help':p('help ls pwd cd mkdir touch cat echo [matn > fayl] rm whoami date clear neofetch\nchat on|off  — chat xabarlarini terminalda ko\'rsatish/yashirish\nsend <matn>  — terminaldan chatga yozish\nname <ism>   — ism o\'zgartirish\nexit         — menyuga qaytish','dim');break;
+ case'ls':{const d=path(a[0]);if(!fsys.has(d)||fsys.get(d)!==null){p('ls: papka topilmadi','err');break}p(kids(d).map(k=>k.split('/').pop()+(fsys.get(k)===null?'/':'')).join('  ')||'(bo\'sh)');break}
+ case'pwd':p(cwd);break;
+ case'cd':{const d=path(a[0]||'/');if(fsys.get(d)===null&&fsys.has(d)){cwd=d}else p('cd: papka yo\'q','err');break}
+ case'mkdir':if(!a[0])p('mkdir: nom kerak','err');else fsys.set(path(a[0]),null);break;
+ case'touch':if(!a[0])p('touch: nom kerak','err');else{const f=path(a[0]);if(!fsys.has(f))fsys.set(f,'')}break;
+ case'cat':{const f=path(a[0]);if(typeof fsys.get(f)==='string')p(fsys.get(f));else p('cat: fayl topilmadi','err');break}
+ case'rm':{const f=path(a[0]);if(f!=='/'&&fsys.has(f)){[...fsys.keys()].filter(k=>k===f||k.startsWith(f+'/')).forEach(k=>fsys.delete(k))}else p('rm: topilmadi','err');break}
+ case'echo':{const i=rest.indexOf('>');if(i<0)p(rest);else fsys.set(path(rest.slice(i+1).trim()),rest.slice(0,i).trim());break}
+ case'whoami':p(name);break;
+ case'date':p(new Date().toString());break;
+ case'clear':out.innerHTML='';break;
+ case'neofetch':p('OS: Veb-terminal\nFoydalanuvchi: '+name+'\nChat: '+(chatOn?'yoqiq':'o\'chiq')+'\nOnlayn xabarlar: '+msgs.length);break;
+ case'chat':if(a[0]==='on'){chatOn=true;p('chat yoqildi','ok')}else if(a[0]==='off'){chatOn=false;p('chat o\'chirildi','ok')}else p('chat on yoki chat off','err');break;
+ case'send':if(rest)send(rest);else p('send <matn>','err');break;
+ case'name':setName(rest);break;
+ case'exit':menu();return;
+ default:p(c+': buyruq topilmadi (help)','err')}
+ head()}
+
+function setName(n){n=n.trim().slice(0,20);if(!n){p('name <ism>','err');return}name=n;try{localStorage.setItem('gname',n)}catch(e){}p('Ism: '+n,'ok');head()}
+
+document.getElementById('f').addEventListener('submit',e=>{
+ e.preventDefault();const v=inp.value;inp.value='';if(!v.trim())return;hist.push(v);hi=hist.length;
+ if(mode==='menu'){p('> '+v,'dim');const [c,...a]=v.trim().split(/\s+/);
+  if(c==='person'){mode='person';p('— Person rejimi. Chiqish uchun: exit —','ok');msgs.slice(-30).forEach(m=>showMsg(m,false));if(online===false)p('(Server ulanmagan)','err');head()}
+  else if(c==='terminal'){mode='terminal';p('— Terminal rejimi. Yordam: help. Chat xabarlari '+(chatOn?'ko\'rinadi':'yashirin')+' (chat on/off) —','ok');head()}
+  else if(c==='name')setName(a.join(' '));
+  else p('Noma\'lum. person yoki terminal deb yozing.','err');return}
+ if(mode==='person'){if(v.trim()==='exit'){menu();return}send(v);return}
+ p(pr.textContent+' '+v,'dim');term(v)});
+inp.addEventListener('keydown',e=>{if(e.key==='ArrowUp'&&hi>0){inp.value=hist[--hi];e.preventDefault()}else if(e.key==='ArrowDown'&&hi<hist.length){inp.value=hist[++hi]||'';e.preventDefault()}});
+
+p('Salom! Bu yerda odamlar bilan gaplashish yoki terminal ishlatish mumkin.','ok');menu();
+
+let lastId=0,online=null;
+async function poll(){
+ try{
+  const url=first?API+'?_sort=id&_order=desc&_limit=50':API+'?_sort=id&_order=asc&id_gte='+(lastId+1);
+  const r=await fetch(url);if(!r.ok)throw new Error(r.status);let list=await r.json();
+  if(first)list.reverse();
+  if(online===false)p('Server qayta ulandi','ok');online=true;
+  list.forEach(m=>{lastId=Math.max(lastId,m.id);msgs.push(m);
+   if(!first){if(mode==='person')showMsg(m,true);else if(mode==='terminal'&&chatOn)showMsg(m,true)}});
+  first=false;
+ }catch(e){if(online!==false){p('Server bilan aloqa yo\'q (qayta urinilmoqda)...','err');online=false}}
+ setTimeout(poll,1200)}
+poll();
+</script>
+</body>
+</html>

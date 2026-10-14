@@ -1,0 +1,6 @@
+{
+  "name": "gaplashish",
+  "version": "1.0.0",
+  "scripts": { "start": "json-server --watch db.json --host 0.0.0.0 --port 3000 --static ./public" },
+  "dependencies": { "json-server": "0.17.4" }
+}
